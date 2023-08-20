@@ -5,6 +5,7 @@ let boardData = [
 ]
 
 let player = 1;
+let gameOver = false;
 
 const cellElements = document.querySelectorAll(".cell");
 
@@ -60,6 +61,16 @@ function checkResult() {
     if(boardData[0].indexOf(0) == -1 &&
         boardData[1].indexOf(0) == -1 &&
         boardData[2].indexOf(0) == -1) {
-        console.log("Tie")
+        console.log("Tie");
+    }
+}
+
+// Функция окончания игры
+function endGame(winner) {
+    gameOver = true;
+    if(winner == 0) {
+        console.log("Tie");
+    } else {
+        console.log(`Игрок под номером ${winner} победил`);
     }
 }
