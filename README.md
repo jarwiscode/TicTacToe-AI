@@ -1,2 +1,2 @@
 # TicTacToe-Online
-Play to the TicTacToe Online in WebBrowser, for your friends
+Play Tic Tac Toe in your browser with your friends
