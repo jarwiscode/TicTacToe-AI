@@ -176,7 +176,6 @@ function makeRandomAIMove() {
     }
 }
 
-
 function drawMarkers() {
     for (const [row, rowData] of boardData.entries()) {
         for (const [col, marker] of rowData.entries()) {
