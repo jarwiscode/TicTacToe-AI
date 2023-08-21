@@ -15,6 +15,18 @@ body {
     gap: 1rem;
 }
 
+@media (max-width: 480px) {
+    body {
+        padding: 1rem;
+    }
+
+    .board {
+        width: 100%;
+        height: auto;
+    }
+}
+
+
 .board {
     width: 430px;
     height: 320px;
@@ -56,16 +68,19 @@ body {
 }
 
 button {
-    background-color: yellowgreen;
+    background-color: #ff6b6b;
     border: none;
     border-radius: 1rem;
     font-family: inherit;
     font-size: 1.5rem;
     padding: 0.7rem 1rem;
-    color: rgb(245, 245, 245);
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
     cursor: pointer;
-    background-color: rgba(14, 71, 14, 0.705);
+    background-color: #ff4f4f;
+    transform: scale(1.1); /* Увеличение масштаба при наведении */
 }
+
