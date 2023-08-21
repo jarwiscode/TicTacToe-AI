@@ -65,6 +65,7 @@ function makeRandomAIMove() {
 
     const availableCells = [];
     const potentialWinningMoves = [];
+    const blockingMoves = [];
 
     for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 3; col++) {
@@ -76,6 +77,13 @@ function makeRandomAIMove() {
                 if (checkWin(PLAYER_O)) {
                     potentialWinningMoves.push({ row, col });
                 }
+
+                // Проверяем, есть ли у пользователя возможность завершить ряд
+                boardData[row][col] = PLAYER_X;
+                if (checkWin(PLAYER_X)) {
+                    blockingMoves.push({ row, col });
+                }
+
                 boardData[row][col] = EMPTY;
             }
         }
@@ -86,6 +94,11 @@ function makeRandomAIMove() {
         const winningMove = potentialWinningMoves[randomIndex];
         const index = winningMove.row * 3 + winningMove.col;
         placeMarker(index);
+    } else if (blockingMoves.length > 0) {
+        const randomIndex = Math.floor(Math.random() * blockingMoves.length);
+        const blockingMove = blockingMoves[randomIndex];
+        const index = blockingMove.row * 3 + blockingMove.col;
+        placeMarker(index);
     } else if (availableCells.length > 0) {
         const randomIndex = Math.floor(Math.random() * availableCells.length);
         const randomMove = availableCells[randomIndex];
@@ -93,6 +106,7 @@ function makeRandomAIMove() {
         placeMarker(index);
     }
 }
+
 
 
 
