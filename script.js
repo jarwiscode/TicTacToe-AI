@@ -26,6 +26,77 @@ cellElements.forEach((cell, index) => {
     });
 });
 
+function makeAIMove() {
+    if (gameOver) return;
+
+    const bestMove = findBestMove(boardData, PLAYER_O);
+    const index = bestMove.row * 3 + bestMove.col;
+    placeMarker(index);
+}
+
+function findBestMove(board, player) {
+    let bestScore = -Infinity;
+    let bestMove;
+
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+            if (board[row][col] === EMPTY) {
+                board[row][col] = player;
+                const score = minimax(board, 0, false);
+                board[row][col] = EMPTY;
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = { row, col };
+                }
+            }
+        }
+    }
+
+    return bestMove;
+}
+
+function minimax(board, depth, isMaximizing) {
+    const scores = {
+        [PLAYER_X]: -10,
+        [PLAYER_O]: 10,
+        [GAME_STATUS.DRAW]: 0
+    };
+
+    const winner = checkWinner();
+    if (winner !== null) {
+        return scores[winner];
+    }
+
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === EMPTY) {
+                    board[row][col] = PLAYER_O;
+                    const score = minimax(board, depth + 1, false);
+                    board[row][col] = EMPTY;
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+        }
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === EMPTY) {
+                    board[row][col] = PLAYER_X;
+                    const score = minimax(board, depth + 1, true);
+                    board[row][col] = EMPTY;
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+        }
+        return bestScore;
+    }
+}
+
 function checkWin(player) {
     for (let i of [0, 1, 2]) {
         const rowSum = boardData[i][0] + boardData[i][1] + boardData[i][2];
@@ -72,13 +143,11 @@ function makeRandomAIMove() {
             if (boardData[row][col] === EMPTY) {
                 availableCells.push({ row, col });
 
-                // Проверяем, есть ли у ИИ возможность завершить ряд
                 boardData[row][col] = PLAYER_O;
                 if (checkWin(PLAYER_O)) {
                     potentialWinningMoves.push({ row, col });
                 }
 
-                // Проверяем, есть ли у пользователя возможность завершить ряд
                 boardData[row][col] = PLAYER_X;
                 if (checkWin(PLAYER_X)) {
                     blockingMoves.push({ row, col });
@@ -106,8 +175,6 @@ function makeRandomAIMove() {
         placeMarker(index);
     }
 }
-
-
 
 
 function drawMarkers() {
