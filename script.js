@@ -2,6 +2,9 @@ const cellElements = document.querySelectorAll(".cell");
 const resultElement = document.getElementById("result");
 const restartButton = document.getElementById("restart");
 
+const movesHistory = [];
+
+
 const EMPTY = 0;
 const PLAYER_X = 1;
 const PLAYER_O = -1;
@@ -26,9 +29,18 @@ cellElements.forEach((cell, index) => {
     });
 });
 
+function analyzeMovesHistory() {
+    const playerMoves = movesHistory.filter(move => move.player === PLAYER_X);
+    const opponentMoves = movesHistory.filter(move => move.player === PLAYER_O);
+    const opponentWinningMoves = movesHistory.filter(move => checkWin(move.player));
+}
+
+
 function makeAIMove() {
     if (gameOver) return;
-
+    
+    analyzeMovesHistory(); // Анализ истории ходов игроков
+    
     const bestMove = findBestMove(boardData, PLAYER_O);
     const index = bestMove.row * 3 + bestMove.col;
     placeMarker(index);
@@ -56,7 +68,14 @@ function findBestMove(board, player) {
     return bestMove;
 }
 
+const minimaxCache = new Map();
+
 function minimax(board, depth, isMaximizing) {
+    const cachedResult = minimaxCache.get(board.toString());
+    if (cachedResult !== undefined) {
+        return cachedResult;
+    }
+
     const scores = {
         [PLAYER_X]: -10,
         [PLAYER_O]: 10,
@@ -80,6 +99,8 @@ function minimax(board, depth, isMaximizing) {
                 }
             }
         }
+        const result = bestScore;
+        minimaxCache.set(board.toString(), result); // Сохраняем результат в кэше
         return bestScore;
     } else {
         let bestScore = Infinity;
@@ -93,8 +114,11 @@ function minimax(board, depth, isMaximizing) {
                 }
             }
         }
+        const result = bestScore;
+        minimaxCache.set(board.toString(), result); // Сохраняем результат в кэше
         return bestScore;
     }
+    
 }
 
 function checkWin(player) {
@@ -121,10 +145,11 @@ function placeMarker(index) {
     let row = Math.floor(index / 3);
     if (boardData[row][col] === EMPTY && !gameOver) {
         boardData[row][col] = player;
+        movesHistory.push({ row, col, player }); // Сохранение хода в историю
         player *= -1;
         drawMarkers();
         checkResult();
-
+    
         if (!gameOver && player === PLAYER_O) {
             makeRandomAIMove();
         }
